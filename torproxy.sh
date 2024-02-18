@@ -134,10 +134,10 @@ for env in $(printenv | grep '^TOR_'); do
     val="\"$(echo $env | cut -c$len-)\""
     [[ "$name" =~ _ ]] && continue
     [[ "$val" =~ ^\"([0-9]+|false|true)\"$ ]] && val="$(sed 's|"||g' <<< $val)"
-    if grep -q "^$name" testrc; then
-        sed -i "/^$name/s| .*| $val|" testrc
+    if grep -q "^$name" /etc/tor/torrc; then
+        sed -i "/^$name/s| .*| $val|" /etc/tor/torrc
     else
-        echo "$name $val" >>testrc
+        echo "$name $val" >>/etc/tor/torrc
     fi
 done
 
