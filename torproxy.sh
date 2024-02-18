@@ -130,13 +130,14 @@ shift $(( OPTIND - 1 ))
 [[ "${GROUPID:-""}" =~ ^[0-9]+$ ]] && groupmod -g $GROUPID -o tor
 for env in $(printenv | grep '^TOR_'); do
     name="$(cut -c5- <<< ${env%%=*})"
-    val="\"${env##*=}\""
+    len=$((${#name} + 6))
+    val="\"$(echo $env | cut -c$len-)\""
     [[ "$name" =~ _ ]] && continue
     [[ "$val" =~ ^\"([0-9]+|false|true)\"$ ]] && val="$(sed 's|"||g' <<< $val)"
-    if grep -q "^$name" /etc/tor/torrc; then
-        sed -i "/^$name/s| .*| $val|" /etc/tor/torrc
+    if grep -q "^$name" testrc; then
+        sed -i "/^$name/s| .*| $val|" testrc
     else
-        echo "$name $val" >>/etc/tor/torrc
+        echo "$name $val" >>testrc
     fi
 done
 
