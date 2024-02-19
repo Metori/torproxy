@@ -132,12 +132,13 @@ IFS=$'\n'
 for env in $(printenv | grep '^TOR_'); do
     name="$(cut -c5- <<< ${env%%=*})"
     len=$((${#name} + 6))
-    val="\"$(echo $env | cut -c$len-)\""
+    val="$(echo $env | cut -c$len-)"
     [[ "$name" =~ _ ]] && continue
     [[ "$val" =~ ^\"([0-9]+|false|true)\"$ ]] && val="$(sed 's|"||g' <<< $val)"
     if grep -q "^$name" /etc/tor/torrc; then
         sed -i "/^$name/s| .*| $val|" /etc/tor/torrc
     else
+        echo "">>/etc/tor/torrc
         echo "$name $val" >>/etc/tor/torrc
     fi
 done

@@ -1,6 +1,13 @@
 FROM alpine
 MAINTAINER David Personette <dperson@gmail.com>
 
+# Dockerfile for Tor Relay Server with obfs4proxy (Multi-Stage build)
+FROM golang:alpine AS go-build
+
+RUN apk --no-cache add --update git \
+ && go install -v gitlab.com/yawning/obfs4.git/obfs4proxy@latest \
+ && cp -rv /go/bin /usr/local/
+
 # Install tor and privoxy
 RUN apk --no-cache --no-progress upgrade && \
     apk --no-cache --no-progress add bash curl privoxy shadow tini tor tzdata &&\
